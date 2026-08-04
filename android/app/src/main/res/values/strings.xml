@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">المبشرين</string>
+    <string name="title_activity_main">المبشرين</string>
+    <string name="package_name">com.almubashshireen.app</string>
+    <string name="custom_url_scheme">com.almubashshireen.app</string>
+</resources>

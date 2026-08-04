@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Scheherazade+New:wght@400;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --screen-mobile: 320px;
+  --screen-tablet: 768px;
+  --screen-laptop: 1024px;
+  --screen-desktop: 1440px;
+
+  --text-xs: clamp(0.7rem, 1.5vw, 0.75rem);
+  --text-sm: clamp(0.8rem, 1.8vw, 0.875rem);
+  --text-base: clamp(0.9rem, 2vw, 1rem);
+  --text-md: clamp(1rem, 2.5vw, 1.125rem);
+  --text-lg: clamp(1.1rem, 3vw, 1.25rem);
+  --text-xl: clamp(1.2rem, 3.5vw, 1.5rem);
+  --text-2xl: clamp(1.4rem, 4.2vw, 2rem);
+  --arabic-body: clamp(1.25rem, 3.5vw, 1.6rem);
+  --arabic-display: clamp(1.8rem, 5.5vw, 2.8rem);
+}
+
+@theme {
+  --font-sans: "Inter", "Lato", system-ui, -apple-system, sans-serif;
+  --font-serif: "Cormorant+Garamond", "Playfair Display", Georgia, serif;
+  --font-arabic: "Amiri", "Scheherazade New", serif;
+  
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in-up: fadeInUp 0.15s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Global setup */
+html, body {
+  background-color: #150C0C; /* Balsamico dark background */
+  color: #EACEAA; /* Champagne light cream text */
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+/* Arabesque SVG watermark background adjusted for dark theme styling */
+.arabesque-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath d='M80,0 L160,80 L80,160 L0,80 Z' fill='none' stroke='%23D39858' stroke-width='0.35' stroke-opacity='0.08'/%3E%3Crect x='23.4' y='23.4' width='113.2' height='113.2' transform='rotate(45 80 80)' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.06'/%3E%3Crect x='23.4' y='23.4' width='113.2' height='113.2' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.06'/%3E%3Ccircle cx='80' cy='80' r='40' fill='none' stroke='%23D39858' stroke-width='0.45' stroke-opacity='0.08'/%3E%3Ccircle cx='80' cy='80' r='60' fill='none' stroke='%23D39858' stroke-width='0.3' stroke-opacity='0.05'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(0 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(45 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(90 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(135 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(180 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(225 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(270 80 80)'/%3E%3Cpath d='M80,40 C90,55 110,55 120,40 C105,50 105,70 120,80 C110,65 90,65 80,80 C90,65 90,45 80,40' fill='none' stroke='%23D39858' stroke-width='0.4' stroke-opacity='0.07' transform='rotate(315 80 80)'/%3E%3Cpath d='M0,0 A40,40 0 0,0 40,0 M160,0 A40,40 0 0,1 120,0 M0,160 A40,40 0 0,1 40,160 M160,160 A40,40 0 0,0 120,160' fill='none' stroke='%23D39858' stroke-width='0.3' stroke-opacity='0.07'/%3E%3Cpath d='M0,20 L20,0 M140,0 L160,20 M0,140 L20,160 M140,160 L160,140' fill='none' stroke='%23D39858' stroke-width='0.25' stroke-opacity='0.05'/%3E%3Cpath d='M80,0 L80,160 M0,80 L160,80' fill='none' stroke='%23D39858' stroke-width='0.25' stroke-dasharray='2 4' stroke-opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px;
+}
+
+/* Custom scrollbar matching dark sacred library style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #150C0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #85431E;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D39858;
+}
+
+/* Reader font-size modifiers loaded locally in the reader or HTML */
+.text-size-small { font-size: 0.875rem; }
+.text-size-medium { font-size: 1rem; }
+.text-size-large { font-size: 1.125rem; }
+.text-size-xl { font-size: 1.25rem; }
+
+.arabic-text-small { font-size: 1.75rem; line-height: 2.75rem; }
+.arabic-text-medium { font-size: 2.25rem; line-height: 3.5rem; }
+.arabic-text-large { font-size: 2.75rem; line-height: 4.25rem; }
+.arabic-text-xl { font-size: 3.5rem; line-height: 5rem; }
+
+/* Pulse animation for playing ayah card */
+@keyframes glow-pulse {
+  0%, 100% {
+    border-color: #D39858;
+    box-shadow: 0 0 5px rgba(211, 152, 88, 0.3);
+  }
+  50% {
+    border-color: #85431E;
+    box-shadow: 0 0 15px rgba(133, 67, 30, 0.6);
+  }
+}
+
+.playing-glow {
+  animation: glow-pulse 2s infinite;
+}
+
+/* High contrast mode adaptations override variables locally or globally */
+.high-contrast {
+  --font-arabic: "Amiri", "Scheherazade New", serif;
+}
+.high-contrast html, .high-contrast body {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+.high-contrast .card-theme {
+  background-color: #F9F4EC !important;
+  border-color: #34150F !important;
+  color: #000000 !important;
+}
+
+/* Ensure smooth transition in all interactive components */
+.transition-all-custom {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- 3D Perspectivity & Card Flip utilities --- */
+.perspective {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-theme {
+  position: relative;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* --- Sophisticated Dark Design Theme CSS Overrides --- */
+
+/* Adapt existing background containers that were Champagne to be Deep Dark cacao-woods instead */
+.bg-\[\#EACEAA\] {
+  background-color: #23120f !important;
+  color: #EACEAA !important;
+}
+.bg-\[\#EACEAA\]\/40 {
+  background-color: rgba(35, 18, 15, 0.45) !important;
+}
+.bg-\[\#EACEAA\]\/50 {
+  background-color: rgba(35, 18, 15, 0.55) !important;
+}
+.bg-\[\#EACEAA\]\/30 {
+  background-color: rgba(35, 18, 15, 0.3) !important;
+}
+.hover\:bg-\[\#D39858\]\/20:hover {
+  background-color: rgba(211, 152, 88, 0.25) !important;
+}
+
+/* Ensure exact text contrast reversing */
+.text-\[\#150C0C\] {
+  color: #F5E2C6 !important; /* Soft warm creme */
+}
+.text-\[\#34150F\] {
+  color: #EACEAA !important; /* Elegant gold text heading */
+}
+.text-\[\#34150F\]\/75 {
+  color: rgba(234, 206, 170, 0.75) !important;
+}
+.text-\[\#150C0C\]\/75 {
+  color: rgba(245, 226, 198, 0.7) !important;
+}
+.hover\:text-\[\#34150F\]:hover {
+  color: #EACEAA !important;
+}
+
+/* Input boxes, text areas, selection lists */
+.bg-white {
+  background-color: #170A08 !important;
+  color: #EACEAA !important;
+  border-color: rgba(211, 152, 88, 0.4) !important;
+}
+input, select, textarea, option {
+  background-color: #1a0c0a !important;
+  color: #EACEAA !important;
+  border-color: rgba(211, 152, 88, 0.35) !important;
+}
+
+/* Ensure tables look incredibly slick and dark */
+tr:nth-child(even) {
+  background-color: rgba(234, 206, 170, 0.04) !important;
+}
+tr:nth-child(odd) {
+  background-color: rgba(234, 206, 170, 0.08) !important;
+}
+
+/* Extra decorative accents */
+.border-\[\#D39858\] {
+  border-color: rgba(211, 152, 88, 0.35) !important;
+}
+.border-\[\#D39858\]\/50 {
+  border-color: rgba(211, 152, 88, 0.25) !important;
+}
+.border-\[\#D39858\]\/35 {
+  border-color: rgba(211, 152, 88, 0.2) !important;
+}
+.border-\[\#D39858\]\/40 {
+  border-color: rgba(211, 152, 88, 0.22) !important;
+}
+.border-\[\#D39858\]\/55 {
+  border-color: rgba(211, 152, 88, 0.3) !important;
+}
+.border-\[\#D39858\]\/60 {
+  border-color: rgba(211, 152, 88, 0.35) !important;
+}
+.border-l-2.border-\[\#85431E\] {
+  border-color: #85431E !important;
+}
+
+/* Background overlay adjustments */
+.bg-\[\#150C0C\]\/5, .bg-\[\#34150F\]\/5 {
+  background-color: rgba(234, 206, 170, 0.06) !important;
+}
+.bg-\[\#150C0C\]\/10, .bg-\[\#34150F\]\/15 {
+  background-color: rgba(234, 206, 170, 0.12) !important;
+}
+.bg-\[\#34150F\]\/90 {
+  background-color: rgba(15, 7, 5, 0.92) !important;
+}
+.bg-\[\#34150F\]\/45 {
+  background-color: rgba(31, 13, 11, 0.45) !important;
+}
+.bg-\[\#150C0C\]\/95 {
+  background-color: rgba(15, 7, 5, 0.96) !important;
+}
+.bg-\[\#150C0C\]\/25 {
+  background-color: rgba(234, 206, 170, 0.18) !important;
+}
+.bg-\[\#150C0C\]\/50 {
+  background-color: rgba(15, 7, 5, 0.5) !important;
+}
+.bg-\[\#34150F\]\/75 {
+  background-color: rgba(31, 13, 11, 0.75) !important;
+}
+

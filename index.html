@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- iOS / Android Web App Meta Toggles -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="المبشرين" />
+    <meta name="theme-color" content="#34150F" />
+    
+    <link rel="manifest" href="/manifest.json" />
+    <title>المبشرين — The Bearers of Good News</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // ⚠️ DEBUG MODE - Global Error Handlers for Android Blank Screen Issue ⚠️
+      // These handlers display errors on screen to diagnose blank screen issues
+      
+      function displayError(title, message, details) {
+        const errorDiv = document.createElement('div');
+        errorDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;color:#000;padding:20px;font-family:monospace;font-size:14px;overflow:auto;z-index:999999;';
+        errorDiv.innerHTML = `
+          <div style="border:4px solid red;padding:20px;background:#fff5f5;">
+            <h1 style="color:red;font-size:24px;margin-bottom:10px;">⚠️ DEBUG MODE - ${title} ⚠️</h1>
+            <p style="font-weight:bold;margin-bottom:10px;">${message}</p>
+            <div style="margin-bottom:20px;">
+              <strong>Error Details:</strong>
+              <pre style="background:#f0f0f0;padding:10px;overflow:auto;border:1px solid #ccc;margin-top:5px;">${details || 'No details available'}</pre>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(errorDiv);
+      }
+
+      // Catch uncaught JavaScript errors
+      window.onerror = function(message, source, lineno, colno, error) {
+        displayError(
+          'WINDOW.ONERROR',
+          'Uncaught JavaScript error',
+          `Message: ${message}\nSource: ${source}\nLine: ${lineno}\nColumn: ${colno}\nError: ${error?.stack || error?.toString() || 'No error object'}`
+        );
+        return false;
+      };
+
+      // Catch unhandled promise rejections
+      window.addEventListener('unhandledrejection', function(event) {
+        displayError(
+          'UNHANDLED PROMISE REJECTION',
+          'Unhandled promise rejection',
+          `Reason: ${event.reason?.stack || event.reason?.toString() || 'Unknown reason'}`
+        );
+      });
+
+      // One-time cleanup: remove old service worker and clear its cache
+      // This self-heals installations that had the old service worker registered
+      (async () => {
+        if ('serviceWorker' in navigator) {
+          try {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              await registration.unregister();
+            }
+            // Clear any caches created by the old service worker
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+              if (cacheName.startsWith('almubashshireen-')) {
+                await caches.delete(cacheName);
+              }
+            }
+          } catch (e) {
+            // Silently fail - this is just cleanup
+            console.warn('Service worker cleanup failed:', e);
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

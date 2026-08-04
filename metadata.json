@@ -1,0 +1,6 @@
+{
+  "name": "Islamic Dawah & Qur'an Hub",
+  "description": "An academic educational application and spiritually grounded portal for Islamic Da'wah, interactive Qur'an study with Tafsir commentary, authentic Hadith search compilations, and children's interactive guides.",
+  "requestFramePermissions": [ "geolocation" ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
