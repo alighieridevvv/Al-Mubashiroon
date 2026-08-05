@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, Book, Heart, Clipboard, ChevronDown, CheckCircle } from 'lucide-react';
+import { Search, Filter, Book, Heart, Clipboard, ChevronDown, CheckCircle, Loader2 } from 'lucide-react';
 
 interface Hadith {
   id: string;
@@ -10,10 +10,11 @@ interface Hadith {
   arabic: string;
   english: string;
   topic: string;
-  grade: 'Sahih' | 'Hasan' | 'Daif' | string; // (only authentic used)
+  grade: 'Sahih' | 'Hasan' | 'Daif' | 'Ungraded' | string;
 }
 
-const PRELOADED_HADITHS: Hadith[] = [
+// Curated highlights with topic tags (small subset)
+const CURATED_HADITHS: Hadith[] = [
   {
     id: "hadith_1",
     collection: "Sahih Al-Bukhari",
@@ -117,7 +118,8 @@ const PRELOADED_HADITHS: Hadith[] = [
 ];
 
 export default function HadithLibrary() {
-  const [hadiths] = useState<Hadith[]>(PRELOADED_HADITHS);
+  const [hadiths, setHadiths] = useState<Hadith[]>(CURATED_HADITHS);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCollection, setSelectedCollection] = useState('All');
   const [selectedTopic, setSelectedTopic] = useState('All');
@@ -141,6 +143,55 @@ export default function HadithLibrary() {
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+
+  // Lazy load collection data when selected
+  useEffect(() => {
+    const loadCollection = async () => {
+      if (selectedCollection === 'All') {
+        setHadiths(CURATED_HADITHS);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        let collectionHadiths: Hadith[];
+        
+        switch (selectedCollection) {
+          case 'Sahih Al-Bukhari':
+            const bukhari = await import('../data/hadith/bukhari.json') as { default: Hadith[] };
+            collectionHadiths = bukhari.default;
+            break;
+          case 'Sahih Muslim':
+            const muslim = await import('../data/hadith/muslim.json') as { default: Hadith[] };
+            collectionHadiths = muslim.default;
+            break;
+          case 'Sunan Abi Dawud':
+            const abudawud = await import('../data/hadith/abudawud.json') as { default: Hadith[] };
+            collectionHadiths = abudawud.default;
+            break;
+          case 'Riyad As-Salihin':
+            const riyad = await import('../data/hadith/riyad-assalihin.json') as { default: Hadith[] };
+            collectionHadiths = riyad.default;
+            break;
+          case 'Arbain An-Nawawi':
+            const nawawi = await import('../data/hadith/arbain-nawawi.json') as { default: Hadith[] };
+            collectionHadiths = nawawi.default;
+            break;
+          default:
+            collectionHadiths = [];
+        }
+        
+        setHadiths(collectionHadiths);
+      } catch (error) {
+        console.error(`Failed to load ${selectedCollection}:`, error);
+        setHadiths([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCollection();
+  }, [selectedCollection]);
 
   useEffect(() => {
     localStorage.setItem('fav_hadiths', JSON.stringify(favoriteIds));
@@ -179,18 +230,20 @@ export default function HadithLibrary() {
   const collections = ['All', 'Sahih Al-Bukhari', 'Sahih Muslim', 'Sunan Abi Dawud', 'Riyad As-Salihin', 'Arbain An-Nawawi'];
   const topics = ['All', 'Sincerity (Niyyah)', 'Brotherhood', 'Sacred Knowledge', 'Forgiveness', 'Manners & Ethics'];
 
-  const filteredHadiths = hadiths.filter(h => {
-    const matchesSearch = 
-      h.english.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      h.narrator.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      h.arabic.includes(searchQuery) ||
-      h.topic.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCollection = selectedCollection === 'All' || h.collection === selectedCollection;
-    const matchesTopic = selectedTopic === 'All' || h.topic === selectedTopic;
+  const filteredHadiths = useMemo(() => {
+    return hadiths.filter(h => {
+      const matchesSearch = 
+        h.english.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        h.narrator.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        h.arabic.includes(searchQuery) ||
+        h.topic.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCollection = selectedCollection === 'All' || h.collection === selectedCollection;
+      const matchesTopic = selectedTopic === 'All' || h.topic === selectedTopic;
 
-    return matchesSearch && matchesCollection && matchesTopic;
-  });
+      return matchesSearch && matchesCollection && matchesTopic;
+    });
+  }, [hadiths, searchQuery, selectedCollection, selectedTopic]);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-8 arabesque-pattern" id="hadith_library_root">
@@ -264,10 +317,11 @@ export default function HadithLibrary() {
           </div>
 
           <div className="bg-[#1E0F0D] border border-[#D39858]/30 rounded-xl p-5">
-            <h4 className="font-serif font-bold text-sm text-[#D39858] uppercase tracking-wider mb-4 pb-2 border-b border-[#D39858]/20 flex items-center gap-2">
+            <h4 className="font-serif font-bold text-sm text-[#D39858] uppercase tracking-wider mb-2 pb-2 border-b border-[#D39858]/20 flex items-center gap-2">
               <Filter className="h-4 w-4" />
               Topics
             </h4>
+            <p className="text-[10px] text-[#EACEAA]/40 mb-3 italic">Curated highlights only</p>
             <div className="space-y-1">
               {topics.map(top => (
                 <button
@@ -291,10 +345,17 @@ export default function HadithLibrary() {
           <div className="text-center md:text-left">
             <span className="text-xs font-mono text-[#D39858] tracking-widest uppercase">Verified Transmissions</span>
             <h2 className="font-serif text-2xl font-bold text-[#EACEAA] mt-1">Foundational Prophetic Sayings</h2>
-            <p className="text-xs text-[#EACEAA]/60 mt-1">Showing {filteredHadiths.length} authenticated Hadiths matching current criteria.</p>
+            <p className="text-xs text-[#EACEAA]/60 mt-1">
+              {isLoading ? 'Loading collection...' : `Showing ${filteredHadiths.length} authenticated Hadiths matching current criteria.`}
+            </p>
           </div>
 
-          {filteredHadiths.length === 0 ? (
+          {isLoading ? (
+            <div className="p-12 text-center bg-[#1E0F0D] border border-[#D39858]/20 rounded-xl">
+              <Loader2 className="h-8 w-8 text-[#D39858] animate-spin mx-auto mb-3" />
+              <p className="text-sm text-[#EACEAA]/80">Loading hadith collection...</p>
+            </div>
+          ) : filteredHadiths.length === 0 ? (
             <div className="p-12 text-center bg-[#1E0F0D] border border-[#D39858]/20 rounded-xl">
               <Book className="h-10 w-10 text-[#D39858]/30 mx-auto mb-3" />
               <p className="text-sm text-[#EACEAA]/80">No Hadiths found matching that search.</p>
@@ -324,7 +385,13 @@ export default function HadithLibrary() {
                           <span className="text-[10px] text-[#EACEAA]/45 font-mono">No. {item.number}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-950/40 text-emerald-400 border border-emerald-900/40">
+                          <span className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+                            item.grade === 'Sahih' 
+                              ? 'bg-emerald-950/40 text-emerald-400 border-emerald-900/40'
+                              : item.grade === 'Ungraded'
+                              ? 'bg-gray-700/40 text-gray-400 border-gray-600/40'
+                              : 'bg-amber-950/40 text-amber-400 border-amber-900/40'
+                          }`}>
                             {item.grade}
                           </span>
                           <button
@@ -386,7 +453,7 @@ export default function HadithLibrary() {
                                 )}
                               </button>
                             </div>
-                            <span className="text-[10px] font-mono text-[#EACEAA]/40">Source Verified: Standard chains</span>
+                            <span className="text-[10px] font-mono text-[#EACEAA]/40">Source: Sunnah.com (via AhmedBaset/hadith-json)</span>
                           </div>
                         </motion.div>
                       )}
@@ -452,7 +519,10 @@ export default function HadithLibrary() {
 
                 {/* Topic Filter */}
                 <div className="space-y-2 pt-2">
-                  <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#D39858]">Topics</span>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#D39858]">Topics</span>
+                    <span className="text-[9px] text-[#EACEAA]/40 italic">Curated only</span>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
                     {topics.map(t => (
                       <button
@@ -483,6 +553,13 @@ export default function HadithLibrary() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Attribution Footer */}
+      <div className="mt-8 pt-4 border-t border-[#D39858]/10 text-center">
+        <p className="text-[10px] text-[#EACEAA]/40 font-mono">
+          Source: Sunnah.com (via AhmedBaset/hadith-json)
+        </p>
+      </div>
     </div>
   );
 }
