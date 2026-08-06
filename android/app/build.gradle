@@ -3,6 +3,9 @@ apply plugin: 'com.android.application'
 android {
     namespace = "com.almubashshireen.app"
     compileSdk = rootProject.ext.compileSdkVersion
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "com.almubashshireen.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -17,6 +20,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            buildConfigField "boolean", "DEBUG", "true"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
